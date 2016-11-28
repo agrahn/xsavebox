@@ -39,7 +39,7 @@ The user commands are:
 
      <name> is an identifier (not a command!) composed of arbitrary
      non-active characters, including spaces and numbers. A command for
-     declaration of <name> does not exist.
+     the declaration of <name> does not exist.
 
      Starred `*' variants allow for colour injection (pdfLaTeX/LuaLaTeX
      only).
