@@ -14,7 +14,7 @@
 \usepackage{color}
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
-\usepackage[protrusion,expansion]{microtype}
+%\usepackage[protrusion,expansion]{microtype}
 \usepackage{parskip}
 \usepackage[bookmarksnumbered,linktocpage]{hyperref}
 \usepackage{fancyvrb}
@@ -131,6 +131,8 @@ is useful only in the \LaTeX{} $\rightarrow$ \verb+dvips+ $\rightarrow$ \verb+ps
 Verbatim content can only be saved using the `\verb+xlrbox[*]+' environment.
 
 With \LaTeX{} in DVI mode and \XeLaTeX, box \emph{saving} commands should not be placed on a line of their own with empty lines above and below. For technical reasons this will produce an empty paragraph. Always place them at the beginning or at the end of a paragraph in the input file. Also, box saving commands cannot be placed in the document preamble with \LaTeX{} (DVI) and \XeLaTeX{}.
+
+In a right-to-left typesetting context (RTL), the \verb+<content>+ argument should be enclosed in a pair of \verb+\beginR+ and \verb+\endR+ commands for correctly typesetting RTL text.
 
 \subsection*{Referencing saved content}
 Previously saved content can be inserted with\\[-1.6\baselineskip]
