@@ -1,4 +1,4 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % xsavebox.sty
 %
@@ -49,8 +49,8 @@
 \RequirePackage{pdfbase} %everything with `pbs_' prefix
 \RequirePackage{l3keys2e}
 
-\def\g@xsb@version@tl{0.2}
-\def\g@xsb@date@tl{2016/03/07}
+\def\g@xsb@version@tl{0.5}
+\def\g@xsb@date@tl{2017/03/16}
 \ProvidesExplPackage{xsavebox}{\g@xsb@date@tl}{\g@xsb@version@tl}
 {saveboxes for repeating content without code replication}
 
@@ -95,18 +95,30 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % saving content
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\DeclareDocumentCommand\xsavebox{smO{\width}O{c}m}{
+\DeclareDocumentCommand\xsavebox{smO{\width}O{c}+m}{
   \group_begin:
+  \tl_set:Nn\l_xsb_content_grouped_tl{
+    \group_begin:
+      \cs_set:Nn\ocgxii_beginocg:nnnn{}\cs_set:Nn\ocgxii_endocg:{}
+      #5
+    \group_end:
+  }
+  \xsb_push_props: %new, empty properties dict
+  \xsb_beginLTR:
   \IfBooleanTF{#1}{
     %later colour injection possible (pdfTeX, LuaTeX)
-    \hbox_set:Nn\l_xsb_raw_box{\color@begingroup#5\color@endgroup} %raw
+    \hbox_set:Nn\l_xsb_raw_box{ %raw content
+      \color@begingroup\l_xsb_content_grouped_tl\color@endgroup
+    }
     \hbox_set:Nn\l_xsb_box{ %content re-aligned
-      \makebox[#3][#4]{\color@begingroup#5\color@endgroup}
+      \makebox[#3][#4]{
+        \color@begingroup\l_xsb_content_grouped_tl\color@endgroup
+      }
     }
   }{
     %the LaTeX way (no colour injection)
-    \sbox\l_xsb_raw_box{#5} %raw content
-    \savebox\l_xsb_box[#3][#4]{#5} %re-aligned
+    \sbox\l_xsb_raw_box{\l_xsb_content_grouped_tl} %raw content
+    \savebox\l_xsb_box[#3][#4]{\l_xsb_content_grouped_tl} %re-aligned
   }
   %process one of \l_xsb_raw_box or \l_xsb_box
   \dim_compare:nTF{\box_wd:N\l_xsb_raw_box>\box_wd:N\l_xsb_box}{
@@ -127,15 +139,32 @@
       }
       \xsb_process_box:nnnN{#2}{#3}{#4}\l_xsb_box
     }{
+      \IfBooleanTF{#1}{
+        \hbox_set:Nn\l_xsb_raw_box{ %raw content
+          \color@begingroup#5\color@endgroup
+        }
+      }{
+        \sbox\l_xsb_raw_box{#5} %raw content
+      }
       \xsb_process_box:nnnN{#2}{#3}{#4}\l_xsb_raw_box
     }
   }{
+    \IfBooleanTF{#1}{
+      \hbox_set:Nn\l_xsb_box{ %content re-aligned
+        \makebox[#3][#4]{
+          \color@begingroup#5\color@endgroup
+        }
+      }
+    }{
+      \savebox\l_xsb_box[#3][#4]{#5} %re-aligned
+    }
     \xsb_process_box:nnnN{#2}{\width}{c}\l_xsb_box
   }
+  \xsb_endLTR:
   \group_end:
 }
 
-\DeclareDocumentCommand\xsbox{mm}{\xsavebox{#1}{#2}}
+\DeclareDocumentCommand\xsbox{m+m}{\xsavebox{#1}{#2}}
 
 \DeclareDocumentEnvironment{xlrbox}{m}{
   \xsb_xlrbox:
@@ -152,6 +181,8 @@
 
 \cs_new_nopar:Nn\xsb_xlrbox:{
   \group_begin:
+  \xsb_push_props: %new, empty properties dict
+  \xsb_beginLTR:
   \hbox_set:Nn\l_xsb_box\bgroup\bgroup
   \ignorespaces
 }
@@ -161,11 +192,14 @@
   \egroup\egroup
   \sbox\l_xsb_box{\hbox_unpack_clear:N\l_xsb_box}
   \xsb_process_box:nnnN{#1}{\width}{c}\l_xsb_box
+  \xsb_endLTR:
   \group_end:
 }
 
 \cs_new_nopar:Nn\xsb_xlrbox_star:{
   \group_begin:
+  \xsb_push_props: %new, empty properties dict
+  \xsb_beginLTR:
   \hbox_set:Nn\l_xsb_box\bgroup\color@begingroup
   \ignorespaces
 }
@@ -174,6 +208,7 @@
   \unskip
   \color@endgroup\egroup
   \xsb_process_box:nnnN{#1}{\width}{c}\l_xsb_box
+  \xsb_endLTR:
   \group_end:
 }
 
@@ -197,9 +232,11 @@
   \box_set_ht:Nn#4{\height+\g_xsb_margin_tl}
   \box_set_dp:Nn#4{\depth+\g_xsb_margin_tl}
   %distill box to Form XObject
-  \pbs_pdfxform:nnn{1}{0}{#4}
+  \xsb_pop_props_to:N\l_tmpa_tl
+  \pbs_pdfxform:nnnnn{1}{0}{\l_tmpa_tl}{}{#4}
   %define command for inserting the m-boxed XObject reference
   \tl_gset:cx{the#1}{
+    \exp_not:N\xsb_beginLTR:
     \exp_not:N\makebox[\l_xsb_new_wd_tl][#3]{
       \exp_not:N\hbox_to_wd:nn{\l_xsb_wd_tl}{
         \exp_not:N\vrule~width~\c_zero_dim~height~\l_xsb_ht_tl~
@@ -208,8 +245,52 @@
         \exp_not:N\pbs_pdfrefxform:n{\pbs_pdflastxform:}\hss
       }
     }
+    \exp_not:N\xsb_endLTR:
   }
 }
 
 \box_new:N\l_xsb_box     %for saving the re-aligned content
 \box_new:N\l_xsb_raw_box %for saving the raw content
+
+%environment for setting LTR typesetting direction with e-TeX based engines
+\cs_new:Nn\xsb_beginLTR:{
+  \cs_if_exist:NT\TeXXeTstate{
+    \int_compare:nT{\TeXXeTstate>\c_zero}{\beginL}
+  }
+}
+\cs_new:Nn\xsb_endLTR:{
+  \cs_if_exist:NT\TeXXeTstate{
+    \int_compare:nT{\TeXXeTstate>\c_zero}{\endL}
+  }
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%for nested xsavebox/xlrbox cmds/envs, maintain a stack of /Properties
+%dictionaries, mostly used for marked-content property lists, e. g. OCGs;
+%(see PDF Reference)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\seq_new:N\g_xsb_props_seq
+
+%push new, empty properties dictionary on the stack (to be used by THIS pkg)
+\cs_new:Nn\xsb_push_props:{\seq_gpush:Nn\g_xsb_props_seq{}}
+
+%pop current properties dict from stack and place its contents as a
+%/Properties << <prop dict> >> entry into the macro argument
+\cs_new:Nn\xsb_pop_props_to:N{
+  \seq_gpop:NNT\g_xsb_props_seq\l_tmpa_tl{
+    \tl_trim_spaces:N\l_tmpa_tl
+    \str_if_eq_x:nnF{\l_tmpa_tl}{}{\tl_set:Nx#1{/Properties<<\l_tmpa_tl>>}}
+  }
+}
+
+%add property (usually /key/val entry) to current properties dict;
+%this command is meant to be used by OTHER packages
+\cs_new:Nn\xsb_addto_props:n{
+  \seq_gpop:NNT\g_xsb_props_seq\l_tmpa_tl{
+    \tl_put_right:Nn\l_tmpa_tl{#1~}
+    \seq_gpush:Nx\g_xsb_props_seq{\l_tmpa_tl}
+  }
+}
+
+%get stack size; meant to be used by OTHER packages
+\cs_new:Nn\xsb_count_props:{\seq_count:N\g_xsb_props_seq}
