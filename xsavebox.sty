@@ -233,7 +233,8 @@
   \box_set_dp:Nn#4{\depth+\g_xsb_margin_tl}
   %distill box to Form XObject
   \xsb_pop_props_to:N\l_tmpa_tl
-  \pbs_pdfxform:nnnnn{1}{0}{\l_tmpa_tl}{}{#4}
+  \pbs_pdfxform:nnnnn{1}{0}{\l_tmpa_tl}{
+    \cs_if_exist_use:N\ocgbase_insert_oc:}{#4}
   %define command for inserting the m-boxed XObject reference
   \tl_gset:cx{the#1}{
     \exp_not:N\xsb_beginLTR:
