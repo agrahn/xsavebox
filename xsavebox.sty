@@ -49,8 +49,8 @@
 \RequirePackage{pdfbase} %everything with `pbs_' prefix
 \RequirePackage{l3keys2e}
 
-\def\g@xsb@version@tl{0.5}
-\def\g@xsb@date@tl{2017/03/16}
+\def\g@xsb@version@tl{0.6}
+\def\g@xsb@date@tl{2017/03/23}
 \ProvidesExplPackage{xsavebox}{\g@xsb@date@tl}{\g@xsb@version@tl}
 {saveboxes for repeating content without code replication}
 
@@ -60,7 +60,7 @@
   Please~install~an~up~to~date~version~of~`#1'.\\
   Loading~xsavebox~will~abort!
 }
-\@ifpackagelater{pdfbase}{2016/03/07}{}{
+\@ifpackagelater{pdfbase}{2017/03/23}{}{
   \msg_error:nnn{xsavebox}{support~outdated}{pdfbase.sty}
   \tex_endinput:D
 }
