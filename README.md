@@ -1,8 +1,8 @@
-#The `xsavebox` LaTeX Package
+# The `xsavebox` LaTeX Package
 
-© 2016 Alexander Grahn
+© 2016--`\today` Alexander Grahn
 
-##Description
+## Description
 
 This package defines commands for saving content that can be repeatedly placed into the document without replicating DVI/PDF code in the output file, allowing for smaller file size of the final PDF and improved content caching for faster display in certain PDF viewers. The method makes use of "Form XObjects" defined in the PDF specification.
 
@@ -13,7 +13,7 @@ All common TeX engines and back-ends are supported:
 * LaTeX &rArr; dvips &rArr; ps2pdf/Distiller
 * (Xe)LaTeX &rArr; (x)dvipdfmx
 
-##User commands
+## User commands
 
 * content saving:
 ````latex
@@ -39,6 +39,6 @@ The second, short form is useable if `<name>` is composed of `[a-zA-Z]`.
 
 The package was written in the LaTeX3 syntax.
 
-##License
+## License
 
 This material is subject to the [LaTeX Project Public License](LICENSE).
