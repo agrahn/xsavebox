@@ -1,3 +1,7 @@
+2017-06-11
+	* v0.7
+	* fix: failure due to change of \hbox:n in expl3 [2017/05/13]
+
 2017-03-23
 	* v0.6
 	* fix: pdfbase.sty related adjustments

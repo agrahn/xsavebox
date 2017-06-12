@@ -49,8 +49,8 @@
 \RequirePackage{pdfbase} %everything with `pbs_' prefix
 \RequirePackage{l3keys2e}
 
-\def\g@xsb@version@tl{0.6}
-\def\g@xsb@date@tl{2017/03/23}
+\def\g@xsb@version@tl{0.7}
+\def\g@xsb@date@tl{2017/06/11}
 \ProvidesExplPackage{xsavebox}{\g@xsb@date@tl}{\g@xsb@version@tl}
 {saveboxes for repeating content without code replication}
 
@@ -183,13 +183,13 @@
   \group_begin:
   \xsb_push_props: %new, empty properties dict
   \xsb_beginLTR:
-  \hbox_set:Nn\l_xsb_box\bgroup\bgroup
+  \hbox_set:Nw\l_xsb_box\group_begin:
   \ignorespaces
 }
 
 \cs_new_nopar:Nn\xsb_endxlrbox:n{
   \unskip
-  \egroup\egroup
+  \group_end:\hbox_set_end:
   \sbox\l_xsb_box{\hbox_unpack_clear:N\l_xsb_box}
   \xsb_process_box:nnnN{#1}{\width}{c}\l_xsb_box
   \xsb_endLTR:
@@ -200,13 +200,13 @@
   \group_begin:
   \xsb_push_props: %new, empty properties dict
   \xsb_beginLTR:
-  \hbox_set:Nn\l_xsb_box\bgroup\color@begingroup
+  \hbox_set:Nw\l_xsb_box\color@begingroup
   \ignorespaces
 }
 
 \cs_new_nopar:Nn\xsb_endxlrbox_star:n{
   \unskip
-  \color@endgroup\egroup
+  \color@endgroup\hbox_set_end:
   \xsb_process_box:nnnN{#1}{\width}{c}\l_xsb_box
   \xsb_endLTR:
   \group_end:
