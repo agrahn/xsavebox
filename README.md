@@ -41,4 +41,4 @@ The package was written in the LaTeX3 syntax.
 
 ## License
 
-This material is subject to the [LaTeX Project Public License](LICENSE).
+This material is subject to the [LaTeX Project Public License](http://mirrors.ctan.org/macros/latex/base/lppl.txt).
