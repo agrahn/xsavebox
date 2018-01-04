@@ -1,14 +1,11 @@
-                            ============================
-                             The xsavebox LaTeX Package
-                            ============================
+====================================
+ The xsavebox LaTeX Package
 
+ https://github.com/agrahn/xsavebox
 
-Author:
+ (C) 2016--\today Alexander Grahn
+====================================
 
-Alexander Grahn
-
-
-Description:
 
 This package defines commands for saving content that can be repeatedly
 placed into the document without replicating DVI/PDF code in the output

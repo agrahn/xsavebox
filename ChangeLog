@@ -1,3 +1,7 @@
+2018-01-04
+	* v0.8
+	* documentation updated
+
 2017-06-11
 	* v0.7
 	* fix: failure due to change of \hbox:n in expl3 [2017/05/13]

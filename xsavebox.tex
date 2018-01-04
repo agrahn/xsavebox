@@ -19,6 +19,7 @@
 %\usepackage[protrusion,expansion]{microtype}
 \usepackage{parskip}
 \usepackage[bookmarksnumbered,linktocpage]{hyperref}
+\usepackage[ocgcolorlinks]{ocgx2}
 \usepackage{fancyvrb}
 \clubpenalty=10000
 \widowpenalty=10000
@@ -58,7 +59,7 @@
 \title{The {\sffamily xsavebox} Package, v\g@xsb@version@tl}
 \expandafter\parsedate\g@xsb@date@tl\relax %set current date to package date
 \makeatother
-\author{Alexander Grahn\\[1ex]\includegraphics[height=2.7ex]{mailto}}
+\author{Alexander Grahn\\[1ex]\url{https://github.com/agrahn/xsavebox}}
 \maketitle
 \begin{abstract}
 \noindent This package defines commands for saving content that can be repeatedly placed into the document without replicating DVI/PDF code in the output file, allowing for smaller size of the final PDF file and improved content caching for faster display in certain PDF viewers. The user commands are modelled after the standard \LaTeX{} commands \verb+\savebox+, \verb+\sbox+, \verb+\usebox+ and the `\verb+lrbox+' environment. The package supports all common \TeX{} engines and back-ends, including `\verb+dvips+'.

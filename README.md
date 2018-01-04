@@ -2,6 +2,8 @@
 
 © 2016--`\today` Alexander Grahn
 
+https://github.com/agrahn/xsavebox
+
 ## Description
 
 This package defines commands for saving content that can be repeatedly placed into the document without replicating DVI/PDF code in the output file, allowing for smaller file size of the final PDF and improved content caching for faster display in certain PDF viewers. The method makes use of "Form XObjects" defined in the PDF specification.
