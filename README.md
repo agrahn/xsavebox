@@ -18,6 +18,7 @@ All common TeX engines and back-ends are supported:
 ## User commands
 
 * content saving:
+
 ````latex
 \xsavebox{<name>}[<width>][<position>]{...}
 \xsavebox*{<name>}[<width>][<position>]{...}
@@ -27,15 +28,18 @@ All common TeX engines and back-ends are supported:
 \begin{xlrbox}{<name>}...\end{xlrbox}
 \begin{xlrbox*}{<name>}...\end{xlrbox*}
 ````
+
 `<name>` is an identifier (not a command!) composed of arbitrary non-active characters, including spaces and numbers. A command for the declaration of `<name>` does not exist.
 
 Starred (`*`) variants allow for colour injection (pdfLaTeX/LuaLaTeX only).
 
 * content insertion (referencing):
+
 ````latex
 \xusebox{<name>}
 \the<name>
 ````
+
 The second, short form is useable if `<name>` is composed of `[a-zA-Z]`.
 
 
