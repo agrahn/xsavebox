@@ -88,7 +88,7 @@ It should be emphasized that \enquote{Form XObjects} is a PDF feature. Content s
 \begin{Verbatim}
 margin=<dimension>  
 \end{Verbatim}
-When content is converted into a Form XObject, it is clipped to its bounding box. However, the glyphs of the fonts which are used for typesetting tend to be slightly bigger than their boxes. In order to avoid clipping, the `\verb+xsavebox+' package \emph{temporarily} adds an additional margin of \verb+3pt+ around the content. In rare cases, \verb+3pt+ may turn out to be insufficient, e.\,g. if text is up-scaled before being put into a save box. This option allows the setting of a larger margin to ensure that the content gets entirely into the save box. Note that whichever value is chosen for `\verb+margin+', the spacing of the boxes, when inserted into the document, remains unchanged. This is what every user definitely wants.
+When content is converted into a Form XObject, it is clipped to its bounding box. However, the font glyphs used for typesetting tend to be slightly bigger than their boxes. In order to avoid clipping, the `\verb+xsavebox+' package \emph{temporarily} adds an additional margin of \verb+3pt+ around the content. In rare cases, \verb+3pt+ may turn out to be insufficient, e.\,g. if text is up-scaled before being put into a save box. This option allows the setting of a larger margin to ensure that the content gets entirely into the save box. Note that whichever value is chosen for `\verb+margin+', the spacing of the boxes, when inserted into the document, remains unchanged. This is what every user definitely wants.
 
 \section{User commands}
 \subsection*{Content saving}
