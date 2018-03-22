@@ -87,6 +87,36 @@
 
 \ProcessKeysOptions{xsavebox}
 
+\int_new:N\g_xsb_count_int
+\bool_new:N\g_xsb_dvips_bool
+\sys_if_output_pdf:F{
+  \bool_if:NF\g_pbs_dvipdfmx_bool{\bool_gset_true:N\g_xsb_dvips_bool}
+}
+\begingroup
+\catcode`\{=12
+\catcode`\}=12
+\catcode`\(=1
+\catcode`\)=2
+\gdef\lbraceother({)
+\gdef\rbraceother(})
+\endgroup
+\cs_new:Nn\xsb_saving_begin:{
+  \bool_if:NT\g_xsb_dvips_bool{
+    \iow_now:Nx\g_pbs_psdata_stream{}
+    \special{ps:~\lbraceother~}
+  }
+}
+\cs_new:Nn\xsb_saving_end:{
+  \bool_if:NT\g_xsb_dvips_bool{
+    \special{ps:~\rbraceother~exec~}
+  }
+}
+\cs_new:Nn\xsb_using:n{
+  \bool_if:NT\g_xsb_dvips_bool{
+    \iow_now:Nx\g_pbs_psdata_stream{}
+  }
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % content insertion (referencing, actually)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -233,8 +263,8 @@
   \box_set_dp:Nn#4{\depth+\g_xsb_margin_tl}
   %distill box to Form XObject
   \xsb_pop_props_to:N\l_tmpa_tl
-  \pbs_pdfxform:nnnnn{1}{0}{\l_tmpa_tl}{
-    \cs_if_exist_use:N\ocgbase_insert_oc:}{#4}
+  \xsb_saving_begin:\pbs_pdfxform:nnnnn{1}{0}{\l_tmpa_tl}{
+    \cs_if_exist_use:N\ocgbase_insert_oc:}{#4}\xsb_saving_end:
   %define command for inserting the m-boxed XObject reference
   \tl_gset:cx{the#1}{
     \exp_not:N\xsb_beginLTR:
