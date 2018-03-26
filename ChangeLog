@@ -1,3 +1,7 @@
+2018-03-26
+	* v0.10
+	* fix: preventing creation of unused XObjects; doc updated
+
 2018-01-16
 	* v0.9
 	* fix: README.md did not render correctly on CTAN

@@ -49,8 +49,8 @@
 \RequirePackage{pdfbase} %everything with `pbs_' prefix
 \RequirePackage{l3keys2e}
 
-\def\g@xsb@version@tl{0.9}
-\def\g@xsb@date@tl{2018/01/16}
+\def\g@xsb@version@tl{0.10}
+\def\g@xsb@date@tl{2018/03/26}
 \ProvidesExplPackage{xsavebox}{\g@xsb@date@tl}{\g@xsb@version@tl}
 {saveboxes for repeating content without code replication}
 
@@ -65,7 +65,14 @@
   \tex_endinput:D
 }
 
-%package options
+%re-run message
+\msg_set:nnn{xsavebox}{rerun}{Rerun~to~get~internal~references~right!}
+\cs_new:Nn\xsb_rerun_msg:{
+  \cs_if_exist:NF\g_xsb_rerunwarned_tl{
+    \tl_new:N\g_xsb_rerunwarned_tl
+    \AtEndDocument{\msg_warning:nn{xsavebox}{rerun}}
+  }
+}
 
 %unknown package option error message
 \msg_set:nnnn{xsavebox}{unknown~package~option}{Unknown~package~option~`#1'.}{
@@ -73,6 +80,7 @@
   perhaps~it~is~spelled~incorrectly.
 }
 
+%package options
 \tl_gset:Nn\g_xsb_margin_tl{3pt}
 \keys_define:nn{xsavebox}{
   margin .code:n = {
@@ -87,40 +95,20 @@
 
 \ProcessKeysOptions{xsavebox}
 
-\int_new:N\g_xsb_count_int
-\bool_new:N\g_xsb_dvips_bool
-\sys_if_output_pdf:F{
-  \bool_if:NF\g_pbs_dvipdfmx_bool{\bool_gset_true:N\g_xsb_dvips_bool}
-}
-\begingroup
-\catcode`\{=12
-\catcode`\}=12
-\catcode`\(=1
-\catcode`\)=2
-\gdef\lbraceother({)
-\gdef\rbraceother(})
-\endgroup
-\cs_new:Nn\xsb_saving_begin:{
-  \bool_if:NT\g_xsb_dvips_bool{
-    \iow_now:Nx\g_pbs_psdata_stream{}
-    \special{ps:~\lbraceother~}
-  }
-}
-\cs_new:Nn\xsb_saving_end:{
-  \bool_if:NT\g_xsb_dvips_bool{
-    \special{ps:~\rbraceother~exec~}
-  }
-}
-\cs_new:Nn\xsb_using:n{
-  \bool_if:NT\g_xsb_dvips_bool{
-    \iow_now:Nx\g_pbs_psdata_stream{}
-  }
-}
+\int_new:N\g_xsb_id_int
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % content insertion (referencing, actually)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\DeclareDocumentCommand\xusebox{m}{\tl_use:c{the#1}}
+\DeclareDocumentCommand\xusebox{m}{
+  \tl_if_exist:cF{the#1}{\msg_error:nnn{xsavebox}{save-box~undefined}{#1}}
+  \tl_use:c{the#1}
+}
+\msg_set:nnnn{xsavebox}{save-box~undefined}{
+  Save-box~`#1'~undefined~\msg_line_context:.
+}{
+  Save-box~`#1'~must~be~defined~/before/~use.
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % saving content
@@ -261,23 +249,42 @@
   }
   \box_set_ht:Nn#4{\height+\g_xsb_margin_tl}
   \box_set_dp:Nn#4{\depth+\g_xsb_margin_tl}
-  %distill box to Form XObject
+  \tl_if_exist:cF{xsb@\int_use:N\g_xsb_id_int}{
+    \tl_gset:cn{xsb@\int_use:N\g_xsb_id_int}{true}
+    \xsb_rerun_msg:
+  }
   \xsb_pop_props_to:N\l_tmpa_tl
-  \xsb_saving_begin:\pbs_pdfxform:nnnnn{1}{0}{\l_tmpa_tl}{
-    \cs_if_exist_use:N\ocgbase_insert_oc:}{#4}\xsb_saving_end:
+  %distill box to Form XObject, if used (ref'ed)
+  \bool_if:cT{c_\tl_use:c{xsb@\int_use:N\g_xsb_id_int}_bool}{
+    \pbs_pdfxform:nnnnn{1}{0}{\l_tmpa_tl}{
+      \cs_if_exist_use:N\ocgbase_insert_oc:}{#4}
+  }
+  \iow_now:Nx\@mainaux{
+    \token_to_str:N\pbs@newkey{xsb@\int_use:N\g_xsb_id_int}{false}
+  }
   %define command for inserting the m-boxed XObject reference
   \tl_gset:cx{the#1}{
+    \exp_not:N\iow_now:Nx\@mainaux{
+      \token_to_str:N\pbs@newkey{xsb@\int_use:N\g_xsb_id_int}{true}
+    }
+    \exp_not:N\bool_if:cF{c_\tl_use:c{xsb@\int_use:N\g_xsb_id_int}_bool}{
+      \exp_not:N\xsb_rerun_msg:
+    }
     \exp_not:N\xsb_beginLTR:
     \exp_not:N\makebox[\l_xsb_new_wd_tl][#3]{
       \exp_not:N\hbox_to_wd:nn{\l_xsb_wd_tl}{
         \exp_not:N\vrule~width~\c_zero_dim~height~\l_xsb_ht_tl~
           depth~\l_xsb_dp_tl
         \exp_not:N\skip_horizontal:n{-\g_xsb_margin_tl}
-        \exp_not:N\pbs_pdfrefxform:n{\pbs_pdflastxform:}\hss
+        \bool_if:cT{c_\tl_use:c{xsb@\int_use:N\g_xsb_id_int}_bool}{
+          \exp_not:N\pbs_pdfrefxform:n{\pbs_pdflastxform:}
+        }
+        \hss
       }
     }
     \exp_not:N\xsb_endLTR:
   }
+  \int_gincr:N\g_xsb_id_int
 }
 
 \box_new:N\l_xsb_box     %for saving the re-aligned content
