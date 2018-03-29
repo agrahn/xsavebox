@@ -110,7 +110,7 @@ When content is converted into a Form XObject, it is clipped to its bounding box
 \vspace{-1\baselineskip}
 \hrulefill\\[-1\baselineskip]
 
-The main difference of these commands as compared to their standard \LaTeX{} counterparts without the leading `\verb+x+' is the way of naming boxes. The label \verb+<xsbox name>+ is an identifier that may be composed of arbitrary non-active characters, including spaces and numbers. A command for declaring a box register \verb+<xsbox name>+ does not exist.
+As for usage, the main difference of these commands as compared to their standard \LaTeX{} counterparts without the leading `\verb+x+' is the way of naming boxes. The label \verb+<xsbox name>+ is an identifier that may be composed of arbitrary non-active characters, such as letters, numbers, spaces, punctuation marks. A command for declaring a box register does not exist; \verb+<xsbox name>+ it is created upon using above-listed commands and environments. Also, an existing \verb+<xsbox name>+ can be re-used, which simply overwrites its old with new content. The package keeps track of box usage; the content of a box is only written to the output file if it is referenced at least once later in the document.
 
 The \verb+[<width>]+ and \verb+[<position>]+ options have the same meaning as with \verb+\savebox+ and \verb+\makebox+. As usual, the additional length commands
 \begin{Verbatim}

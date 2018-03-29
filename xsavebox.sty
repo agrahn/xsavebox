@@ -50,7 +50,7 @@
 \RequirePackage{l3keys2e}
 
 \def\g@xsb@version@tl{0.10}
-\def\g@xsb@date@tl{2018/03/26}
+\def\g@xsb@date@tl{2018/03/29}
 \ProvidesExplPackage{xsavebox}{\g@xsb@date@tl}{\g@xsb@version@tl}
 {saveboxes for repeating content without code replication}
 
@@ -259,14 +259,19 @@
     \pbs_pdfxform:nnnnn{1}{0}{\l_tmpa_tl}{
       \cs_if_exist_use:N\ocgbase_insert_oc:}{#4}
   }
+  %for tracking box usage
   \iow_now:Nx\@mainaux{
     \token_to_str:N\pbs@newkey{xsb@\int_use:N\g_xsb_id_int}{false}
   }
   %define command for inserting the m-boxed XObject reference
   \tl_gset:cx{the#1}{
-    \exp_not:N\iow_now:Nx\@mainaux{
-      \token_to_str:N\pbs@newkey{xsb@\int_use:N\g_xsb_id_int}{true}
-    }
+    \exp_not:N\tl_if_exist:cF{xsb_\int_use:N\g_xsb_id_int}{
+      %mark box as `used'
+      \exp_not:N\iow_now:Nx\@mainaux{
+        \token_to_str:N\pbs@newkey{xsb@\int_use:N\g_xsb_id_int}{true}
+      }
+      \exp_not:N\tl_new:c{xsb_\int_use:N\g_xsb_id_int}
+    }  
     \exp_not:N\bool_if:cF{c_\tl_use:c{xsb@\int_use:N\g_xsb_id_int}_bool}{
       \exp_not:N\xsb_rerun_msg:
     }
