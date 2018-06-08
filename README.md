@@ -2,7 +2,7 @@
 
 © 2016--`\today` Alexander Grahn
 
-https://github.com/agrahn/xsavebox
+**Notice:** I moved to [GitLab](https://gitlab.com/agrahn/xsavebox) recently.
 
 ## Description
 
